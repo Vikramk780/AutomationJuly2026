@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    tools {
+        jdk 'JDK21'
+        maven 'Maven'
+    }
+
     stages {
 
         stage('Checkout') {
@@ -9,31 +14,41 @@ pipeline {
             }
         }
 
-        stage('Clean Project') {
+        stage('Clean') {
             steps {
                 bat 'mvn clean'
             }
         }
 
-        stage('Run Automation Tests') {
+        stage('Test Execution') {
             steps {
                 bat 'mvn test'
+            }
+        }
+
+        stage('Generate Allure Report') {
+            steps {
+                allure([
+                    includeProperties: false,
+                    jdk: '',
+                    results: [[path: 'allure-results']]
+                ])
             }
         }
     }
 
     post {
-
         always {
             archiveArtifacts artifacts: 'screenshots/**/*.*', allowEmptyArchive: true
-        }
 
-        success {
-            echo 'Automation Execution Successful'
-        }
-
-        failure {
-            echo 'Automation Execution Failed'
+            publishHTML([
+                allowMissing: true,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'target/cucumber-reports',
+                reportFiles: 'index.html',
+                reportName: 'Cucumber Report'
+            ])
         }
     }
 }
