@@ -33,19 +33,14 @@ pipeline {
 
         always {
             junit 'target/surefire-reports/*.xml'
-
-            archiveArtifacts(
-                artifacts: 'screenshots/**/*.*',
-                allowEmptyArchive: true
-            )
         }
 
         success {
-            echo '✅ Automation execution completed successfully'
+            echo 'Automation execution completed successfully'
         }
 
         failure {
-            echo '❌ Automation execution failed'
+            echo 'Automation execution failed'
         }
     }
 }
