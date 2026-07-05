@@ -32,9 +32,9 @@ public class Hooks {
     @After(order = 0)
     public void tearDown() {
 
-        if(DriverFactory.getDriver() != null)
-        {
+        if(DriverFactory.getDriver() != null) {
             DriverFactory.getDriver().quit();
+            DriverFactory.tl.remove();
         }
     }
     @After(order = 1)
