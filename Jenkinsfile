@@ -6,6 +6,10 @@ pipeline {
         maven 'Maven'
     }
 
+    triggers {
+        cron('* * * * *')
+    }
+
     options {
         timestamps()
         disableConcurrentBuilds()
