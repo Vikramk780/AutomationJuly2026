@@ -14,41 +14,34 @@ pipeline {
             }
         }
 
-        stage('Clean') {
+        stage('Build & Test') {
             steps {
-                bat 'mvn clean'
+                bat 'mvn clean test'
             }
         }
 
-        stage('Test Execution') {
+        stage('Publish Allure Report') {
             steps {
-                bat 'mvn test'
-            }
-        }
-
-        stage('Generate Allure Report') {
-            steps {
-                allure([
+                allure(
                     includeProperties: false,
-                    jdk: '',
                     results: [[path: 'allure-results']]
-                ])
+                )
             }
         }
     }
 
     post {
+
         always {
             archiveArtifacts artifacts: 'screenshots/**/*.*', allowEmptyArchive: true
+        }
 
-            publishHTML([
-                allowMissing: true,
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
-                reportDir: 'target/cucumber-reports',
-                reportFiles: 'index.html',
-                reportName: 'Cucumber Report'
-            ])
+        success {
+            echo 'Automation execution completed successfully'
+        }
+
+        failure {
+            echo 'Automation execution failed'
         }
     }
 }
